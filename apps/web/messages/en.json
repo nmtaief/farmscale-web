@@ -1,0 +1,99 @@
+{
+  "common": {
+    "appName": "FarmScale",
+    "tagline": "Adapting farms with NASA Earth data and farmer priorities",
+    "sampleData": "Sample data",
+    "liveData": "Live data",
+    "unavailable": "Unavailable",
+    "stale": "Data may be old",
+    "retry": "Retry",
+    "lastUpdated": "Last updated",
+    "viewTable": "View as table",
+    "viewChart": "View as chart",
+    "close": "Close",
+    "comingSoon": "Coming soon",
+    "pilotNotice": "Pilot region: Rajshahi, Bangladesh"
+  },
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "dashboard": "Dashboard",
+    "plan": "Plan",
+    "crops": "Crops",
+    "gateway": "Data Gateway",
+    "more": "More",
+    "settings": "Settings",
+    "designSystem": "Design System"
+  },
+  "context": {
+    "location": "Location",
+    "season": "Current Season",
+    "simpleView": "Simple View",
+    "expertView": "Expert View",
+    "offlineNotice": "Offline: showing saved data"
+  },
+  "seasons": {
+    "kharif_1": "Kharif-1 (Pre-monsoon)",
+    "kharif_2": "Kharif-2 (Monsoon)",
+    "rabi": "Rabi (Winter)"
+  },
+  "landing": {
+    "heroTitle": "Pick your field. Find rotations that fit your climate.",
+    "heroSubtitle": "Turn satellite observations and soil measurements into climate-smart crop rotations tailored to what matters most on your farm.",
+    "exploreAction": "Explore your field",
+    "seeRotations": "See rotations",
+    "trustPoint1Title": "Uses NASA Earth data",
+    "trustPoint1Desc": "Satellite-derived precipitation, soil moisture, and temperature histories.",
+    "trustPoint2Title": "Shows its reasoning",
+    "trustPoint2Desc": "Every rotation card displays the exact data signals and sources behind its rank.",
+    "trustPoint3Title": "Built for farmers and extension",
+    "trustPoint3Desc": "Designed for mid-range phones, unstable connectivity, and clear decisions."
+  },
+  "planner": {
+    "title": "Rotation Planner",
+    "subtitle": "Set your priorities to rank crop rotation strategies.",
+    "saveWater": "Save water",
+    "earnIncome": "Earn income",
+    "rebuildSoil": "Rebuild soil",
+    "zeroPrompt": "Move at least one slider above 0 to rank recommendations.",
+    "whyThisRotation": "Why this rotation",
+    "askAi": "Ask about this recommendation",
+    "aiComingSoon": "Decision assistant is coming soon in a future release.",
+    "usingYourValues": "Using your soil values"
+  },
+  "crops": {
+    "mustard": "Mustard",
+    "wheat": "Wheat",
+    "lentil": "Lentil",
+    "boro_rice": "Boro Rice",
+    "mungbean": "Mungbean",
+    "aus_rice": "Aus Rice",
+    "aman_rice": "Aman Rice",
+    "fallow": "Fallow (Rest period)"
+  },
+  "rotations": {
+    "mustard_mungbean_aman": "Mustard – Mungbean – Aman Rice",
+    "wheat_mungbean_aman": "Wheat – Mungbean – Aman Rice",
+    "lentil_aus_aman": "Lentil – Aus Rice – Aman Rice",
+    "boro_aman": "Boro Rice – Aman Rice"
+  },
+  "signals": {
+    "low_water_demand_winter": "Mustard requires 60% less water than dry-season boro rice.",
+    "legume_nitrogen_boost": "Mungbean naturally fixes atmospheric nitrogen in the soil before monsoon rice.",
+    "monsoon_rainfed_monsoon": "Aman rice relies on monsoon rains, avoiding groundwater pumping.",
+    "moderate_water_winter": "Wheat consumes moderate irrigation while providing strong staple grain security.",
+    "high_market_value": "High local market price yields strong cash return.",
+    "legume_soil_recovery": "Pulse inter-season rotation restores depleted topsoil organic matter.",
+    "pulse_nitrogen_fixation": "Lentil acts as a low-cost, protein-rich nitrogen fixer.",
+    "low_irrigation_cost": "Reduces fuel and electricity pumping expenses significantly.",
+    "soil_microbiome_benefit": "Promotes beneficial microbial diversity in sandy loam soils.",
+    "heavy_groundwater_extraction": "Boro paddy requires heavy groundwater pumping during drought-prone months.",
+    "high_yield_cash_crop": "Offers high gross yield but at high environmental water cost.",
+    "soil_depletion_risk": "Continuous flooded paddy depletes soil minerals and lowers water table."
+  },
+  "ai": {
+    "panelTitle": "FarmScale Assistant",
+    "status": "Coming soon",
+    "disclaimer": "AI recommendations are currently disabled in this version."
+  }
+}

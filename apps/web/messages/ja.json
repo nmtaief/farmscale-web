@@ -1,0 +1,106 @@
+{
+  "_meta": {
+    "note": "Farming terms marked with NEEDS-NATIVE-REVIEW are provisional and require native agronomist validation."
+  },
+  "common": {
+    "appName": "FarmScale (ファームスケール)",
+    "tagline": "NASA地球観測データと農家の優先度に基づいた輪作適地支援",
+    "sampleData": "サンプルデータ",
+    "liveData": "ライブデータ",
+    "unavailable": "利用不可",
+    "stale": "データが古い可能性があります",
+    "retry": "再試行",
+    "lastUpdated": "最終更新",
+    "viewTable": "表形式で表示",
+    "viewChart": "グラフで表示",
+    "close": "閉じる",
+    "comingSoon": "近日公開",
+    "pilotNotice": "パイロット地域：バングラデシュ・ラジシャヒ"
+  },
+  "nav": {
+    "home": "ホーム",
+    "explore": "圃場探索",
+    "dashboard": "気象・土壌",
+    "plan": "輪作計画",
+    "crops": "作物一覧",
+    "gateway": "データゲートウェイ",
+    "more": "その他",
+    "settings": "設定",
+    "designSystem": "デザインシステム"
+  },
+  "context": {
+    "location": "対象地域",
+    "season": "現在シーズン",
+    "simpleView": "簡易表示",
+    "expertView": "詳細表示",
+    "offlineNotice": "オフライン：保存済みデータを表示中"
+  },
+  "seasons": {
+    "_reviewNote": "NEEDS-NATIVE-REVIEW",
+    "kharif_1": "カリフ1期（雨季前）",
+    "kharif_2": "カリフ2期（雨季）",
+    "rabi": "ラビ期（乾季・冬）"
+  },
+  "landing": {
+    "heroTitle": "圃場を選択。気候に適した最適な輪作体系を見つける。",
+    "heroSubtitle": "人工衛星データと土壌分析を組み合わせ、農地の特性と優先度に合わせた気候適応型の輪作体系をご提案します。",
+    "exploreAction": "圃場を探索する",
+    "seeRotations": "輪作プランを見る",
+    "trustPoint1Title": "NASA地球観測データを活用",
+    "trustPoint1Desc": "衛星観測による降水量、土壌水分量、気温の長期推移データを活用。",
+    "trustPoint2Title": "判断理由を明示",
+    "trustPoint2Desc": "すべての提案において、評価の根拠となったデータシグナルと情報源を表示。",
+    "trustPoint3Title": "農家と営農指導員のための設計",
+    "trustPoint3Desc": "通信環境が不安定な端末でも素早く分かりやすく判断できるように最適化。"
+  },
+  "planner": {
+    "title": "輪作プランナー",
+    "subtitle": "重視する優先度を設定して、最適な輪作パターンを比較します。",
+    "saveWater": "節水重視",
+    "earnIncome": "収益性重視",
+    "rebuildSoil": "土壌改善",
+    "zeroPrompt": "提案を表示するには、スライダーを1つ以上動かしてください。",
+    "whyThisRotation": "この輪作が選ばれた理由",
+    "askAi": "この提案について相談する",
+    "aiComingSoon": "AI相談アシスタント機能は今後のアップデートで追加予定です。",
+    "usingYourValues": "入力された土壌測定値を反映中"
+  },
+  "crops": {
+    "_reviewNote": "NEEDS-NATIVE-REVIEW",
+    "mustard": "マスタード（からし菜）",
+    "wheat": "小麦",
+    "lentil": "レンズ豆",
+    "boro_rice": "ボロ稲（乾季水稲）",
+    "mungbean": "リョクトウ（緑豆）",
+    "aus_rice": "アウス稲（前期陸稲）",
+    "aman_rice": "アマン稲（雨季水稲）",
+    "fallow": "休閑（土壌休養）"
+  },
+  "rotations": {
+    "_reviewNote": "NEEDS-NATIVE-REVIEW",
+    "mustard_mungbean_aman": "マスタード – 緑豆 – アマン稲",
+    "wheat_mungbean_aman": "小麦 – 緑豆 – アマン稲",
+    "lentil_aus_aman": "レンズ豆 – アウス稲 – アマン稲",
+    "boro_aman": "ボロ稲 – アマン稲"
+  },
+  "signals": {
+    "_reviewNote": "NEEDS-NATIVE-REVIEW",
+    "low_water_demand_winter": "マスタードは乾季ボロ稲に比べ水消費量を約60%削減します。",
+    "legume_nitrogen_boost": "緑豆の根粒菌が大気中の窒素を固定し、土壌地力を自然に回復します。",
+    "monsoon_rainfed_monsoon": "アマン稲はモンスーンの降雨に依存するため、地下水揚水を抑えられます。",
+    "moderate_water_winter": "小麦は適度な灌漑で主食穀物としての収量安定性を確保します。",
+    "high_market_value": "市場価値が高く、農家の現金収入向上に寄与します。",
+    "legume_soil_recovery": "マメ科作物の導入により表土の有機物含有量を改善します。",
+    "pulse_nitrogen_fixation": "レンズ豆は低コストでタンパク質供給と窒素固定を両立します。",
+    "low_irrigation_cost": "ポンプ揚水に必要な燃料費および電気代を削減できます。",
+    "soil_microbiome_benefit": "砂壌土における有益な土壌微生物生態系の多様性を高めます。",
+    "heavy_groundwater_extraction": "乾季のボロ稲は地下水を大量に揚水する必要があり渇水リスクがあります。",
+    "high_yield_cash_crop": "収量は高いものの環境負荷および水コストが課題となります。",
+    "soil_depletion_risk": "長期の湛水栽培により土壌微量要素の消耗と地下水位低下が進みます。"
+  },
+  "ai": {
+    "panelTitle": "FarmScale アシスタント",
+    "status": "準備中",
+    "disclaimer": "本バージョンではAI自動生成機能は無効化されています。"
+  }
+}
