@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { PriorityWeights, SoilOverrides } from "@farmscale/scoring";
+import type { LandUnit } from "@/lib/agronomics/rotationData";
 
 export interface LocationInfo {
   name: string;
@@ -28,6 +29,8 @@ interface AppState {
   theme: AppTheme;
   isOffline: boolean;
   soilOverrides?: SoilOverrides;
+  unit: LandUnit;
+  aiModalOpen: boolean;
 
   // Actions
   setLocation: (loc: LocationInfo) => void;
@@ -40,6 +43,9 @@ interface AppState {
   setIsOffline: (status: boolean) => void;
   setSoilOverrides: (overrides: SoilOverrides | undefined) => void;
   resetPriorities: () => void;
+  setUnit: (unit: LandUnit) => void;
+  setAiModalOpen: (open: boolean) => void;
+  toggleAiModal: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -55,6 +61,8 @@ export const useAppStore = create<AppState>()(
       theme: "light",
       isOffline: false,
       soilOverrides: undefined,
+      unit: "bigha",
+      aiModalOpen: false,
 
       setLocation: (location) => set({ location }),
       setPriorities: (priorities) => set({ priorities }),
@@ -82,6 +90,9 @@ export const useAppStore = create<AppState>()(
           priorities: { water: 5, income: 5, soil: 5 },
           soilOverrides: undefined,
         }),
+      setUnit: (unit) => set({ unit }),
+      setAiModalOpen: (aiModalOpen) => set({ aiModalOpen }),
+      toggleAiModal: () => set((state) => ({ aiModalOpen: !state.aiModalOpen })),
     }),
     {
       name: "farmscale_client_store_v1",
@@ -92,6 +103,7 @@ export const useAppStore = create<AppState>()(
         viewMode: state.viewMode,
         theme: state.theme,
         soilOverrides: state.soilOverrides,
+        unit: state.unit,
       }),
     }
   )

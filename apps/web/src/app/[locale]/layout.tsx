@@ -8,23 +8,58 @@ import { Header } from "@/components/layout/Header";
 import { ContextBar } from "@/components/layout/ContextBar";
 import { BottomTabBar } from "@/components/layout/BottomTabBar";
 import { OfflineBanner } from "@/components/layout/OfflineBanner";
+import { AiAssistantSlot } from "@/components/layout/AiAssistantSlot";
 import "@/styles/globals.css";
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5, // Allow up to 200%+ zoom for WCAG compliance
-  themeColor: "#F3F7F0",
+  maximumScale: 5, // Allow up to 200%+ zoom for WCAG AA compliance
+  themeColor: "#1B3B2B",
 };
 
-export const metadata: Metadata = {
-  title: "FarmScale – Climate-Adapted Crop Rotations with NASA Earth Data",
-  description:
-    "Decision-support web app combining NASA Earth observations, local soil metrics and farmer priorities to plan resilient 3-season crop rotations.",
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const isBn = locale === "bn";
+  const isJa = locale === "ja";
+
+  const title = isBn
+    ? "ফার্মস্কেল – নাসা স্যাটেলাইট তথ্যে বরেন্দ্র কৃষি পরিকল্পনা"
+    : isJa
+    ? "FarmScale – NASA衛星データによる気候適応型輪作計画"
+    : "FarmScale – Climate-Adapted Crop Rotations with NASA Earth Data";
+
+  const description = isBn
+    ? "নাসা স্যাটেলাইট ও মাটির তথ্য সমন্বয় করে রাজশাহী ও বরেন্দ্র অঞ্চলের জন্য উপযোগী ৩-ফসলি লাভজনক পর্যায় পরিকল্পনা।"
+    : isJa
+    ? "NASA地球観測データと農家優先度を統合したバングラデシュ・バインド地域向け気候適応型3期作営農支援アプリ。"
+    : "Decision-support web app combining NASA Earth observations, local soil metrics and farmer priorities to plan resilient 3-season crop rotations.";
+
+  return {
+    title: {
+      template: "%s | FarmScale",
+      default: title,
+    },
+    description,
+    metadataBase: new URL("https://farmscale-web.vercel.app"),
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        en: "/en",
+        bn: "/bn",
+        ja: "/ja",
+        "x-default": "/bn",
+      },
+    },
+    icons: {
+      icon: "/favicon.ico",
+    },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -59,8 +94,19 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={scriptClass} suppressHydrationWarning>
       <head>
-        {/* Self-hosted subset font declarations are defined in globals.css / tokens.css */}
         <link rel="preconnect" href="/" />
+        {/* Service Worker Registration */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').catch(function(){});
+                });
+              }
+            `,
+          }}
+        />
       </head>
       <body className="min-h-screen flex flex-col bg-bg text-primary transition-colors">
         <NextIntlClientProvider locale={locale} messages={messages}>
@@ -70,6 +116,7 @@ export default async function RootLayout({
           <main className="flex-1 pb-24 md:pb-12 max-w-content w-full mx-auto px-4 py-6">
             {children}
           </main>
+          <AiAssistantSlot />
           <BottomTabBar />
         </NextIntlClientProvider>
       </body>

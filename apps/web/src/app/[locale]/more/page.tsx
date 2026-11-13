@@ -1,17 +1,17 @@
 "use client";
 
 import React from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { AiAssistantSlot } from "@/components/layout/AiAssistantSlot";
-import { Globe, Moon, Database, ShieldAlert, BookOpen, ExternalLink, Info, MapPin } from "lucide-react";
+import { Globe, Moon, Database, ShieldAlert, BookOpen, ExternalLink, Info, MapPin, Wheat, SlidersHorizontal } from "lucide-react";
 import { useAppStore } from "@/lib/store/useAppStore";
 
 export default function MorePage() {
+  const locale = useLocale();
   const location = useAppStore((s) => s.location);
   const viewMode = useAppStore((s) => s.viewMode);
   const toggleViewMode = useAppStore((s) => s.toggleViewMode);
@@ -21,28 +21,71 @@ export default function MorePage() {
       {/* Title */}
       <div className="border-b border-border pb-4 space-y-1">
         <span className="text-xs uppercase font-mono font-bold tracking-wider text-secondary">
-          Preferences & Disclosures
+          {locale === "bn" ? "অতিরিক্ত অপশন ও সেটিংস" : "Preferences & Disclosures"}
         </span>
         <h1 className="text-2xl sm:text-4xl font-serif font-bold text-primary m-0">
-          Settings & About
+          {locale === "bn" ? "সেটিংস ও তথ্যভাণ্ডার" : "Settings & More"}
         </h1>
       </div>
 
+      {/* Quick Navigation to Crops & Gateway */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Link
+          href="/crops"
+          className="p-5 rounded-xl bg-surface border border-border hover:border-gold shadow-card transition-all flex items-center justify-between"
+        >
+          <div className="space-y-1">
+            <span className="font-bold text-primary block text-base flex items-center gap-2">
+              <Wheat className="w-5 h-5 text-gold-text" />
+              {locale === "bn" ? "ফসলের তথ্যভাণ্ডার (লাইব্রেরি)" : "Crop Library"}
+            </span>
+            <span className="text-xs text-secondary block">
+              {locale === "bn"
+                ? "৮টি প্রধান রবি ও খরিপ ফসলের পুষ্টি ও সেচ বৈশিষ্ট্য"
+                : "Browse verified crop profiles, traits, and water needs"}
+            </span>
+          </div>
+          <Button variant="ghost" size="sm">
+            <span>→</span>
+          </Button>
+        </Link>
+
+        <Link
+          href="/gateway"
+          className="p-5 rounded-xl bg-surface border border-border hover:border-water shadow-card transition-all flex items-center justify-between"
+        >
+          <div className="space-y-1">
+            <span className="font-bold text-primary block text-base flex items-center gap-2">
+              <Database className="w-5 h-5 text-water" />
+              {locale === "bn" ? "ডাটা গেটওয়ে ও এপিআই" : "Data Gateway & APIs"}
+            </span>
+            <span className="text-xs text-secondary block">
+              {locale === "bn"
+                ? "নাসা পাওয়ার ও এসএমএপি রিয়েল-টাইম ডাটা সিঙ্ক"
+                : "Live NASA POWER, SMAP, and ML endpoints"}
+            </span>
+          </div>
+          <Button variant="ghost" size="sm">
+            <span>→</span>
+          </Button>
+        </Link>
+      </section>
+
       {/* Preferences Section */}
       <section className="space-y-4">
-        <h2 className="text-lg font-serif font-bold text-primary">
-          User Preferences
+        <h2 className="text-lg font-serif font-bold text-primary m-0">
+          {locale === "bn" ? "ব্যবহারকারীর সেটিংস" : "User Preferences"}
         </h2>
 
-        <div className="rounded-lg bg-surface border border-border shadow-card divide-y divide-border">
+        <div className="rounded-xl bg-surface border border-border shadow-card divide-y divide-border">
           {/* Language Selection */}
           <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <span className="font-semibold text-sm text-primary block">
-                Interface Language
+                {locale === "bn" ? "ভাষার নির্বাচন" : "Interface Language"}
               </span>
               <span className="text-xs text-secondary">
-                Supports English, বাংলা (Bangla), and 日本語 (Japanese)
+                বাংলা (Bangla), English, and 日本語 (Japanese)
               </span>
             </div>
             <LanguageSwitcher />
@@ -52,71 +95,60 @@ export default function MorePage() {
           <div className="p-4 flex items-center justify-between gap-3">
             <div>
               <span className="font-semibold text-sm text-primary block">
-                Color Theme
+                {locale === "bn" ? "রঙের থিম" : "Color Theme"}
               </span>
               <span className="text-xs text-secondary">
-                Switch between Agro-Scientific Light and Night Dark modes
+                {locale === "bn" ? "দিন (হালকা) ও রাত (অন্ধকার) মোড" : "Switch between Agro Light and Night Dark modes"}
               </span>
             </div>
             <ThemeToggle />
           </div>
 
-          {/* Expert Telemetry Toggle */}
-          <div className="p-4 flex items-center justify-between gap-3">
+          {/* Simple vs Expert Mode */}
+          <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <span className="font-semibold text-sm text-primary block">
-                Telemetry Depth
+                {locale === "bn" ? "ভিউ মোড (সহজ বনাম বিশেষজ্ঞ)" : "Display View Mode"}
               </span>
               <span className="text-xs text-secondary">
-                Simple view for farmers, Expert view for agronomists
+                {locale === "bn"
+                  ? "সহজ মোড: কৃষকদের জন্য বড় আইকন ও সাধারণ ভাষা; বিশেষজ্ঞ মোড: বিস্তারিত সূত্র ও সূচক"
+                  : "Simple: Plain-language choice cards for farmers. Expert: Sliders, telemetry and raw formula."}
               </span>
             </div>
-            <button
-              type="button"
-              onClick={toggleViewMode}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${
-                viewMode === "expert"
-                  ? "bg-leaf text-white border-leaf"
-                  : "bg-surface text-primary border-border"
-              }`}
-            >
-              {viewMode === "expert" ? "Expert View Active" : "Simple View Active"}
-            </button>
+            <Button variant="outline" size="sm" onClick={toggleViewMode} className="gap-2">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-secondary" />
+              <span>{viewMode === "simple" ? "Switch to Expert" : "Switch to Simple"}</span>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* About FarmScale & Pilot Region */}
       <section className="space-y-4">
-        <h2 className="text-lg font-serif font-bold text-primary">
-          About FarmScale
+        <h2 className="text-lg font-serif font-bold text-primary m-0">
+          {locale === "bn" ? "পাইলট অঞ্চল ও বিজ্ঞানের উৎস" : "About FarmScale & Pilot Region"}
         </h2>
 
-        <div className="p-6 rounded-lg bg-surface border border-border shadow-card space-y-4 text-xs sm:text-sm text-secondary leading-relaxed">
-          <p className="m-0">
-            <strong className="text-primary font-semibold">FarmScale</strong> is a decision-support platform designed for the <strong className="text-primary font-semibold">NASA Space Apps Challenge 2026</strong> under the challenge <em>&quot;Field Shift: Adapting Farms with NASA Data&quot;</em>.
-          </p>
-          <p className="m-0">
-            It turns NASA Earth observations (POWER, SMAP, MODIS/VIIRS) and local ISRIC soil properties into ranked 3-season crop rotations, customized for farmer priorities across water conservation, economic income, and soil regeneration.
-          </p>
-
-          <div className="p-3.5 rounded bg-bg border border-border/80 flex items-center gap-3">
-            <MapPin className="w-5 h-5 text-water flex-shrink-0" />
+        <div className="rounded-xl bg-surface border border-border p-5 space-y-4 text-xs text-secondary leading-relaxed shadow-card">
+          <div className="flex items-center gap-2">
+            <span className="p-2 rounded-full bg-water/20 text-water">
+              <MapPin className="w-4 h-4" />
+            </span>
             <div>
-              <span className="font-semibold text-primary block text-xs">Pilot Focus Region: Rajshahi, Bangladesh</span>
-              <span className="text-[11px] text-muted block">Barind Tract Pleistocene terrace. Severe groundwater depletion from extensive dry-season boro rice cultivation.</span>
+              <span className="font-semibold text-primary block text-sm">
+                Pilot Focus Region: Rajshahi / Barind Tract, Bangladesh
+              </span>
+              <span className="text-muted font-mono text-[11px]">
+                Active Grid Cell: {location.lat}° N, {location.lon}° E
+              </span>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Data Limits & Scientific Disclaimers */}
-      <section className="space-y-4">
-        <h2 className="text-lg font-serif font-bold text-primary">
-          Data Disclosures & Known Limits
-        </h2>
+          <p className="m-0">
+            The Barind delta is experiencing severe aquifer depression due to continuous flooded boro rice cultivation, with deep tubewell pumping levels falling from 26 feet to over 113 feet. FarmScale is a decision-support platform designed to help smallholder farmers and agriculture extension officers transition toward sustainable crop rotations.
+          </p>
 
-        <div className="p-5 rounded-lg bg-surface border border-border shadow-card space-y-3 text-xs text-secondary leading-relaxed">
           <ul className="space-y-2 m-0 pl-4 list-disc">
             <li>
               <strong className="text-primary">Coarse Gridded Climatology:</strong> NASA POWER data resolution is approximately 0.5° × 0.5° (~50 km). Telemetry reflects regional climatology, not micro-plot topography.
@@ -129,24 +161,6 @@ export default function MorePage() {
             </li>
           </ul>
         </div>
-      </section>
-
-      {/* Navigation Links */}
-      <section className="p-4 rounded-lg bg-surface border border-border flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-primary font-semibold">
-          <Database className="w-4 h-4 text-secondary" />
-          <span>Need API access or endpoint documentation?</span>
-        </div>
-        <Link href="/gateway">
-          <Button variant="outline" size="sm">
-            <span>Data Gateway</span>
-          </Button>
-        </Link>
-      </section>
-
-      {/* Reserved AI Slot */}
-      <section>
-        <AiAssistantSlot />
       </section>
     </div>
   );
