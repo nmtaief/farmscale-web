@@ -5,3 +5,4 @@
   "buildCommand": "npm run build -w @farmscale/web",
   "outputDirectory": "apps/web/.next"
 }
+

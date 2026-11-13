@@ -63,12 +63,12 @@ export const AiAssistantSlot: React.FC = () => {
   // Settings modal
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [apiKey, setApiKey] = useState("");
-  const [model, setModel] = useState("openai/gpt-4o-mini");
+  const [model, setModel] = useState("openrouter/free");
   const [keySaved, setKeySaved] = useState(false);
 
   useEffect(() => {
     const savedKey = localStorage.getItem("farmscale_openrouter_key") || "";
-    const savedModel = localStorage.getItem("farmscale_openrouter_model") || "openai/gpt-4o-mini";
+    const savedModel = localStorage.getItem("farmscale_openrouter_model") || "openrouter/free";
     setApiKey(savedKey);
     setModel(savedModel);
   }, []);
@@ -384,11 +384,12 @@ export const AiAssistantSlot: React.FC = () => {
                   onChange={(e) => setModel(e.target.value)}
                   className="w-full p-2.5 rounded bg-bg border border-border text-primary text-xs focus:outline-none focus:ring-2 focus:ring-gold"
                 >
-                  <option value="openai/gpt-4o-mini">OpenAI: GPT-4o Mini (Fast & Cheap)</option>
+                  <option value="openrouter/free">OpenRouter: Free Auto-Router (100% Free)</option>
+                  <option value="google/gemma-4-31b-it:free">Google: Gemma 4 31B (Free)</option>
+                  <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA: Nemotron 3.5 Lightning (Free)</option>
+                  <option value="baidu/ernie-5.5-flash-preview:free">Baidu: Ernie 5.5 Flash (Free)</option>
+                  <option value="openai/gpt-4o-mini">OpenAI: GPT-4o Mini</option>
                   <option value="google/gemini-2.0-flash">Google: Gemini 2.0 Flash</option>
-                  <option value="anthropic/claude-3-haiku">Anthropic: Claude 3 Haiku</option>
-                  <option value="deepseek/deepseek-chat">DeepSeek: DeepSeek-V3</option>
-                  <option value="meta-llama/llama-3.3-70b-instruct">Meta: Llama 3.3 70B</option>
                 </select>
               </div>
             </div>

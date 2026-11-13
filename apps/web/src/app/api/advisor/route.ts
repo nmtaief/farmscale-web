@@ -102,7 +102,10 @@ export async function POST(req: NextRequest) {
       process.env.OPENROUTER_API_KEY ||
       process.env.NEXT_PUBLIC_OPENROUTER_API_KEY ||
       "";
-    const selectedModel = body.model || "openai/gpt-4o-mini";
+    const selectedModel =
+      body.model ||
+      process.env.OPENROUTER_DEFAULT_MODEL ||
+      "openrouter/free";
 
     // 1. Analyze prompt intent (rule-based fast extraction)
     const pLower = prompt.toLowerCase();
@@ -256,3 +259,4 @@ Write a warm, concise (2-3 sentences) agronomic recommendation explaining WHY th
     );
   }
 }
+
