@@ -16,7 +16,7 @@ export interface KnownArea {
 }
 
 export const KNOWN_AREAS: KnownArea[] = [
-  // Rajshahi Division Pilot Upazilas
+  // Rajshahi Division Pilot Upazilas (Barind Tract)
   { name: "Rajshahi Sadar, Barind", upazila: "Rajshahi Sadar", district: "Rajshahi", lat: 24.3745, lon: 88.6042, isPilot: true },
   { name: "Godagari Upazila, Barind", upazila: "Godagari", district: "Rajshahi", lat: 24.4667, lon: 88.3333, isPilot: true },
   { name: "Tanore Upazila", upazila: "Tanore", district: "Rajshahi", lat: 24.5833, lon: 88.5750, isPilot: true },
@@ -26,7 +26,7 @@ export const KNOWN_AREAS: KnownArea[] = [
   { name: "Charghat Upazila", upazila: "Charghat", district: "Rajshahi", lat: 24.2833, lon: 88.7500, isPilot: true },
   { name: "Bagha Upazila", upazila: "Bagha", district: "Rajshahi", lat: 24.1889, lon: 88.8333, isPilot: true },
   { name: "Mohanpur Upazila", upazila: "Mohanpur", district: "Rajshahi", lat: 24.5333, lon: 88.6500, isPilot: true },
-  
+
   // Surrounding Rajshahi Division Districts
   { name: "Chapainawabganj Sadar", upazila: "Sadar", district: "Chapainawabganj", lat: 24.5965, lon: 88.2775, isPilot: true },
   { name: "Shibganj Upazila", upazila: "Shibganj", district: "Chapainawabganj", lat: 24.6833, lon: 88.1667, isPilot: true },
@@ -39,7 +39,7 @@ export const KNOWN_AREAS: KnownArea[] = [
   { name: "Joypurhat Sadar", upazila: "Sadar", district: "Joypurhat", lat: 25.0947, lon: 89.0279, isPilot: true },
   { name: "Sirajganj Sadar", upazila: "Sadar", district: "Sirajganj", lat: 24.4534, lon: 89.7008, isPilot: true },
 
-  // Major Bangladesh Divisions
+  // Major Bangladesh Divisions (Outside Barind Pilot)
   { name: "Dhaka Central", district: "Dhaka", lat: 23.8103, lon: 90.4125, isPilot: false },
   { name: "Chittagong", district: "Chittagong", lat: 22.3569, lon: 91.7832, isPilot: false },
   { name: "Sylhet", district: "Sylhet", lat: 24.8949, lon: 91.8687, isPilot: false },
@@ -53,7 +53,7 @@ export const KNOWN_AREAS: KnownArea[] = [
  * Calculates straight distance between two lat/lon pairs in kilometers (Haversine formula).
  */
 export function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371; // Earth's radius in km
+  const R = 6371; // Earth radius in km
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -64,6 +64,22 @@ export function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lo
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
+}
+
+export function findNearestPilotArea(lat: number, lon: number): KnownArea {
+  const pilotAreas = KNOWN_AREAS.filter((a) => a.isPilot);
+  let closest = pilotAreas[0];
+  let minDistance = calculateDistanceKm(lat, lon, closest.lat, closest.lon);
+
+  for (const area of pilotAreas) {
+    const dist = calculateDistanceKm(lat, lon, area.lat, area.lon);
+    if (dist < minDistance) {
+      minDistance = dist;
+      closest = area;
+    }
+  }
+
+  return closest;
 }
 
 /**
@@ -92,7 +108,6 @@ export function matchCoordinatesToLocation(lat: number, lon: number): LocationIn
     };
   }
 
-  // Otherwise, use generic GPS coordinate name with closest district indicator
   return {
     name: `Field GPS (${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E)`,
     lat: Math.round(lat * 10000) / 10000,
@@ -108,16 +123,21 @@ export interface GeolocationResult {
   status: GeolocationStatus;
   location?: LocationInfo;
   error?: string;
+  outsidePilotNotice?: string;
+  nearestPilotArea?: LocationInfo;
 }
 
 /**
  * Request GPS location from the browser navigator.geolocation API.
  */
-export async function requestUserLocation(): Promise<GeolocationResult> {
+export async function requestUserLocation(locale = "bn"): Promise<GeolocationResult> {
   if (typeof window === "undefined" || !("geolocation" in navigator)) {
     return {
       status: "unsupported",
-      error: "Geolocation is not supported by your browser.",
+      error:
+        locale === "bn"
+          ? "আপনার ব্রাউজারে লোকেশন সার্ভিস সমর্থিত নয়।"
+          : "Geolocation is not supported by your browser.",
     };
   }
 
@@ -126,19 +146,50 @@ export async function requestUserLocation(): Promise<GeolocationResult> {
       (position) => {
         const { latitude, longitude } = position.coords;
         const matched = matchCoordinatesToLocation(latitude, longitude);
+
+        if (!matched.isPilot) {
+          const nearest = findNearestPilotArea(latitude, longitude);
+          const nearestLocation: LocationInfo = {
+            name: `${nearest.name}`,
+            lat: nearest.lat,
+            lon: nearest.lon,
+            district: nearest.district,
+            isPilot: true,
+          };
+
+          const notice =
+            locale === "bn"
+              ? `আপনি বরেন্দ্র পাইলট এলাকার বাইরে আছেন। নিকটতম পাইলট এলাকা (${nearest.name}) দেখানো হলো।`
+              : `You are outside the Barind pilot zone. Showing nearest pilot area: ${nearest.name}.`;
+
+          resolve({
+            status: "success",
+            location: nearestLocation,
+            outsidePilotNotice: notice,
+            nearestPilotArea: nearestLocation,
+          });
+          return;
+        }
+
         resolve({
           status: "success",
           location: matched,
         });
       },
       (err) => {
-        let msg = "Could not access location.";
+        let msg =
+          locale === "bn" ? "লোকেশন পাওয়া সম্ভব হয়নি।" : "Could not access location.";
         if (err.code === err.PERMISSION_DENIED) {
-          msg = "Location permission was denied. Please allow location access or choose from the list.";
+          msg =
+            locale === "bn"
+              ? "লোকেশন পারমিশন দেওয়া হয়নি। অনুগ্রহ করে জিপিএস চালু করুন বা তালিকা থেকে নির্বাচন করুন।"
+              : "Location permission denied. Please allow location access or choose from the list.";
         } else if (err.code === err.POSITION_UNAVAILABLE) {
-          msg = "GPS location is currently unavailable.";
+          msg =
+            locale === "bn" ? "জিপিএস লোকেশন পাওয়া যাচ্ছে না।" : "GPS location unavailable.";
         } else if (err.code === err.TIMEOUT) {
-          msg = "Location request timed out. Please try again.";
+          msg =
+            locale === "bn" ? "লোকেশন পেতে সময় শেষ হয়েছে।" : "Location request timed out.";
         }
         resolve({
           status: "error",
@@ -153,4 +204,3 @@ export async function requestUserLocation(): Promise<GeolocationResult> {
     );
   });
 }
-

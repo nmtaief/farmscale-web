@@ -15,7 +15,17 @@
     "viewChart": "グラフで表示",
     "close": "閉じる",
     "comingSoon": "近日公開",
-    "pilotNotice": "パイロット地域：バングラデシュ・ラジシャヒ"
+    "pilotNotice": "パイロット地域：バングラデシュ・ラジシャヒ",
+    "all": "すべて",
+    "honestSampleBanner": "これらの数値はパイロット運用の参考例です。作付け前に郡農業普及官（UAO）にご相談ください。",
+    "outsidePilotNotice": "パイロット対象外地域です。最寄りのパイロット地域（{name}）を表示しています。",
+    "listen": "聞く",
+    "stopListening": "停止",
+    "share": "共有",
+    "print": "印刷 / 保存",
+    "copied": "コピーしました",
+    "offlineBadge": "オフライン",
+    "offlineStatus": "オフライン接続中です（保存済みデータを表示中）"
   },
   "nav": {
     "home": "ホーム",
@@ -26,7 +36,9 @@
     "gateway": "データゲートウェイ",
     "more": "その他",
     "settings": "設定",
-    "designSystem": "デザインシステム"
+    "designSystem": "デザインシステム",
+    "myField": "マイ圃場",
+    "ask": "営農相談"
   },
   "context": {
     "location": "対象地域",
@@ -37,9 +49,9 @@
   },
   "seasons": {
     "_reviewNote": "NEEDS-NATIVE-REVIEW",
-    "kharif_1": "カリフ1期（雨季前）",
-    "kharif_2": "カリフ2期（雨季）",
-    "rabi": "ラビ期（乾季・冬）"
+    "kharif_1": "カリフ1作（初夏前作：3月中旬〜6月中旬）",
+    "kharif_2": "カリフ2作（雨季本作：6月中旬〜10月中旬）",
+    "rabi": "ラビ作（冬期：10月中旬〜3月中旬）"
   },
   "landing": {
     "heroTitle": "圃場を選択。気候に適した最適な輪作体系を見つける。",
@@ -51,7 +63,14 @@
     "trustPoint2Title": "判断理由を明示",
     "trustPoint2Desc": "すべての提案において、評価の根拠となったデータシグナルと情報源を表示。",
     "trustPoint3Title": "農家と営農指導員のための設計",
-    "trustPoint3Desc": "通信環境が不安定な端末でも素早く分かりやすく判断できるように最適化。"
+    "trustPoint3Desc": "通信環境が不安定な端末でも素早く分かりやすく判断できるように最適化。",
+    "actionPlan": "今季は何を作付けすべきか？",
+    "actionPlanSub": "圃場に最適な3期作ローテーション提案",
+    "actionField": "マイ圃場の状態",
+    "actionFieldSub": "土壌水分・降水履歴・高温リスク",
+    "actionAsk": "AIに質問する（音声対応）",
+    "actionAskSub": "ベンガル語・日本語対応の営農相談",
+    "currentSeasonLabel": "現在の作期"
   },
   "planner": {
     "title": "輪作プランナー",
@@ -63,7 +82,34 @@
     "whyThisRotation": "この輪作が選ばれた理由",
     "askAi": "この提案について相談する",
     "aiComingSoon": "AI相談アシスタント機能は今後のアップデートで追加予定です。",
-    "usingYourValues": "入力された土壌測定値を反映中"
+    "usingYourValues": "入力された土壌測定値を反映中",
+    "priorityQuestion": "主な優先目標を選択してください:",
+    "saveWaterChoice": "節水優先",
+    "saveWaterDesc": "灌漑水を60%削減し地下水を保全",
+    "moreIncomeChoice": "収益優先",
+    "moreIncomeDesc": "市場価値の高い換金作物で利益最大化",
+    "improveSoilChoice": "土壌改良",
+    "improveSoilDesc": "マメ科作物の窒素固定で地力を再生",
+    "balancedChoice": "バランス型",
+    "balancedDesc": "収益・節水・土壌保全を均等に調和",
+    "recommendationsCount": "最適推奨ローテーション（{count}件）",
+    "sowingWindow": "播種適期",
+    "suggestedVariety": "推奨品種",
+    "irrigationNeed": "必要灌漑回数",
+    "tradeoff": "留意事項・収支比較",
+    "netProfit": "年間純利益（推定）",
+    "productionCost": "年間生産コスト",
+    "comparedToBoro": "慣行ボロ稲単作との比較",
+    "unitSwitch": "土地単位",
+    "bigha": "ビガ（33デシマル）",
+    "decimal": "デシマル",
+    "acre": "エーカー",
+    "hectare": "ヘクタール",
+    "topRankBadge": "第1推奨ローテーション",
+    "readAloud": "音声再生",
+    "sharePlan": "プラン共有",
+    "printSave": "印刷・保存",
+    "actionNextSteps": "実践に向けた次の3ステップ"
   },
   "crops": {
     "_reviewNote": "NEEDS-NATIVE-REVIEW",
@@ -101,6 +147,44 @@
   "ai": {
     "panelTitle": "FarmScale アシスタント",
     "status": "準備中",
-    "disclaimer": "本バージョンではAI自動生成機能は無効化されています。"
+    "disclaimer": "本バージョンではAI自動生成機能は無効化されています。",
+    "voicePrompt": "音声で質問（ベンガル語/英語）...",
+    "listening": "音声を聞き取り中...",
+    "quickPrompt1": "節水型の冬作物",
+    "quickPrompt2": "土壌窒素を回復する方法",
+    "quickPrompt3": "ボロ稲に代わる高収益作物",
+    "quickPrompt4": "カラシナの灌漑タイミング",
+    "ask": "営農相談"
+  },
+  "cropTraits": {
+    "waterEfficiency": "水利用効率",
+    "soilRegeneration": "土壌再生効果",
+    "incomeMargin": "収益・市場マージン",
+    "growthDuration": "作期・生育期間",
+    "searchPlaceholder": "作物を検索...",
+    "allSeasons": "全作期",
+    "allWater": "すべての水要求",
+    "lowWater": "節水型（低水要求）",
+    "highWater": "多水要求",
+    "soilBenefit": {
+      "mustard": "深根が鋤床層を破砕して土壌通気性を改善し、残渣が土壌病原菌を抑制します。大気中の窒素固定は行いません。",
+      "wheat": "豊富な残渣・バイオマスを供給しますが、土壌養分を消費し窒素固定能はありません。",
+      "lentil": "根粒菌の共生によりヘクタール当たり30〜40kgの大気窒素を固定し、後作の土壌肥沃度を高めます。",
+      "boro_rice": "長期湛水により土壌構造を弱め、地下水を多量消費します。窒素固定能はなく化学肥料に依存します。",
+      "mungbean": "短期間でヘクタール当たり35〜50kgの窒素を固定するマメ科作物。優れた緑肥効果を発揮します。",
+      "aus_rice": "雨季初期のイネ。初期降雨を利用しますが、窒素固定能はありません。",
+      "aman_rice": "雨季の主食作イネ。稲わらが有機物を補給しますが、窒素固定能はありません。",
+      "fallow": "自然休閑。土壌水分を保全し有用微生物の回復を促します。"
+    },
+    "waterNeed": {
+      "mustard": "省水（1〜2回の灌漑）。ボロ稲に比べ地下水を大幅節約。",
+      "wheat": "中程度の灌漑（冠根形成期と出穂期の2〜3回）。",
+      "lentil": "極めて少ない灌漑（1回の軽度灌漑または残存土壌水分）。",
+      "boro_rice": "過大な灌漑（20〜25回）。地下水位低下の主因。",
+      "mungbean": "省水（1回の灌漑またはプレモンスーン降雨）。",
+      "aus_rice": "中程度の補給灌漑。",
+      "aman_rice": "天水主体（モンスーン降雨、干ばつ時のみ1回補給）。",
+      "fallow": "灌漑不要。"
+    }
   }
 }

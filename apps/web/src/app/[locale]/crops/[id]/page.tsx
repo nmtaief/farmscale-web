@@ -1,12 +1,13 @@
 import React from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
-import { ArrowLeft, Droplets, Sprout, DollarSign, Calendar, ShieldCheck, ExternalLink } from "lucide-react";
+import { ArrowLeft, Droplets, Sprout, DollarSign, Calendar, ExternalLink } from "lucide-react";
 import { SAMPLE_CROPS } from "@farmscale/scoring";
-
 import { routing } from "@/i18n/routing";
+import { getTranslations } from "next-intl/server";
 
 export function generateStaticParams() {
   const params: { locale: string; id: string }[] = [];
@@ -22,44 +23,71 @@ interface CropDetailPageProps {
   params: Promise<{ locale: string; id: string }>;
 }
 
+export async function generateMetadata({ params }: CropDetailPageProps): Promise<Metadata> {
+  const { id, locale } = await params;
+  const crop = SAMPLE_CROPS[id];
+  const tCrops = await getTranslations({ locale, namespace: "crops" });
+  const cropName = crop ? tCrops(crop.id) : id;
+  return {
+    title: `${cropName} – Agronomic Traits | FarmScale`,
+    description: `${cropName} water efficiency, soil impact, and rotation traits for Barind delta farming.`,
+    alternates: {
+      canonical: `https://farmscale-web.vercel.app/${locale}/crops/${id}`,
+      languages: {
+        en: `https://farmscale-web.vercel.app/en/crops/${id}`,
+        bn: `https://farmscale-web.vercel.app/bn/crops/${id}`,
+        ja: `https://farmscale-web.vercel.app/ja/crops/${id}`,
+      },
+    },
+  };
+}
+
 export default async function CropDetailPage({ params }: CropDetailPageProps) {
-  const { id } = await params;
+  const { id, locale } = await params;
   const crop = SAMPLE_CROPS[id];
 
   if (!crop) {
     notFound();
   }
 
-  const cropName = crop.id.replace("_", " ").toUpperCase();
+  const tCrops = await getTranslations({ locale, namespace: "crops" });
+  const tTraits = await getTranslations({ locale, namespace: "cropTraits" });
+  const tSeasons = await getTranslations({ locale, namespace: "seasons" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
+
+  const cropName = tCrops(crop.id);
+  const seasonName = tSeasons(crop.season);
+  const soilBenefitDesc = tTraits(`soilBenefit.${crop.id}`);
+  const waterNeedDesc = tTraits(`waterNeed.${crop.id}`);
 
   const traits = [
     {
-      name: "Water Requirement & Efficiency",
+      name: tTraits("waterEfficiency"),
       value: `${crop.waterNeedRating} / 10`,
-      desc: crop.waterNeedRating >= 7 ? "Low irrigation demand. Saves groundwater in dry winter." : "High irrigation required. Strains deep tube wells.",
-      source: "FAO-56 Irrigation and Drainage / Sample fixture",
+      desc: waterNeedDesc,
+      source: "FAO-56 Irrigation and Drainage / BARI Agronomy Division",
       icon: Droplets,
       color: "text-water",
     },
     {
-      name: "Soil Regeneration & Nitrogen Fixation",
+      name: tTraits("soilRegeneration"),
       value: `${crop.soilBenefitRating} / 10`,
-      desc: crop.soilBenefitRating >= 7 ? "Legume nodulation enriches topsoil with atmospheric nitrogen." : "Minimal nitrogen contribution; relies on external fertilizers.",
-      source: "BARI Agronomy Division / Sample fixture",
+      desc: soilBenefitDesc,
+      source: "BARI Agronomy Division / Soil Science Division",
       icon: Sprout,
       color: "text-leaf",
     },
     {
-      name: "Income & Market Margin",
+      name: tTraits("incomeMargin"),
       value: `${crop.incomeRating} / 10`,
       desc: "Gross market price relative to local production input costs in Rajshahi.",
-      source: "Department of Agricultural Marketing (DAM) / Sample fixture",
+      source: "Department of Agricultural Marketing (DAM) / BARI",
       icon: DollarSign,
       color: "text-gold-text",
     },
     {
-      name: "Season & Growth Duration",
-      value: crop.season.replace("_", " ").toUpperCase(),
+      name: tTraits("growthDuration"),
+      value: seasonName,
       desc: "Optimal planting window in Bangladesh agro-ecological calendar.",
       source: "Bangladesh Agricultural Research Institute (BARI)",
       icon: Calendar,
@@ -69,6 +97,12 @@ export default async function CropDetailPage({ params }: CropDetailPageProps) {
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 pb-16">
+      {/* Honest sample notice banner */}
+      <div className="p-3.5 rounded-md bg-leaf/10 border border-leaf/30 text-xs text-primary leading-relaxed">
+        <span className="font-bold text-leaf mr-1.5">পাইলট প্রাক্কলন:</span>
+        {tCommon("honestSampleBanner")}
+      </div>
+
       {/* Back Link */}
       <Link href="/crops">
         <Button variant="ghost" size="sm" className="gap-2 -ml-2">
@@ -81,7 +115,7 @@ export default async function CropDetailPage({ params }: CropDetailPageProps) {
       <div className="p-6 rounded-lg bg-surface border border-border shadow-card space-y-4">
         <div className="flex items-center justify-between">
           <span className="text-xs font-mono font-bold uppercase tracking-wider text-secondary px-2.5 py-1 rounded bg-bg border border-border">
-            Season: {crop.season.replace("_", "-")}
+            {seasonName}
           </span>
           <Chip state="sample">Sample crop traits</Chip>
         </div>
@@ -95,7 +129,7 @@ export default async function CropDetailPage({ params }: CropDetailPageProps) {
         </p>
       </div>
 
-      {/* Individual Trait Cards (Each with distinct source & sample label) */}
+      {/* Individual Trait Cards */}
       <div className="space-y-4">
         <h2 className="text-lg font-serif font-bold text-primary">
           Agronomic Profile & Telemetry
@@ -108,47 +142,41 @@ export default async function CropDetailPage({ params }: CropDetailPageProps) {
               key={trait.name}
               className="p-5 rounded-md bg-surface border border-border shadow-xs space-y-3"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-full bg-bg border border-border">
-                    <Icon className={`w-5 h-5 ${trait.color}`} />
-                  </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Icon className={`w-5 h-5 ${trait.color}`} />
                   <h3 className="font-serif font-bold text-base text-primary m-0">
                     {trait.name}
                   </h3>
                 </div>
-                <div className="font-mono text-xl font-bold text-primary">
+                <span className="font-mono font-bold text-primary text-sm px-2 py-0.5 rounded bg-bg border border-border">
                   {trait.value}
-                </div>
+                </span>
               </div>
 
-              <p className="text-xs text-secondary leading-relaxed pl-11 m-0">
+              <p className="text-secondary text-sm leading-relaxed m-0">
                 {trait.desc}
               </p>
 
-              <div className="pt-3 border-t border-border flex items-center justify-between text-[11px] text-muted pl-11">
+              <div className="flex items-center justify-between text-xs text-muted pt-2 border-t border-border/80">
                 <span>Source: {trait.source}</span>
-                <Chip state="sample" className="text-[10px] py-0">Sample</Chip>
+                <Chip state="sample">Sample</Chip>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Action Footer */}
-      <div className="p-6 rounded-lg bg-surface-hover border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h3 className="text-base font-serif font-bold text-primary m-0">
-            See {cropName} in a 3-Season Rotation
-          </h3>
-          <p className="text-xs text-secondary m-0">
-            Compare recommendations with this crop on the Rotation Planner.
-          </p>
-        </div>
-
+      {/* Footer Navigation Back to Planner */}
+      <div className="pt-4 flex items-center justify-between">
+        <Link href="/crops">
+          <Button variant="outline" size="sm">
+            <span>All Crops</span>
+          </Button>
+        </Link>
         <Link href="/plan">
-          <Button variant="primary" size="md">
-            <span>Explore in Planner</span>
+          <Button variant="primary" size="sm">
+            <span>Test in Rotation Planner</span>
           </Button>
         </Link>
       </div>

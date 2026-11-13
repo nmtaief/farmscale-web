@@ -45,11 +45,6 @@ export const ContextBar: React.FC = () => {
 
         {/* Right: Simple vs. Expert View Toggle */}
         <div className="flex items-center gap-1.5">
-          <span className="text-secondary text-[11px] hidden xs:inline">
-            {viewMode === "simple"
-              ? tContext("simpleView")
-              : tContext("expertView")}
-          </span>
           <button
             type="button"
             onClick={toggleViewMode}

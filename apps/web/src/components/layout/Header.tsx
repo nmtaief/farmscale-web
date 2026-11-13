@@ -45,10 +45,10 @@ export const Header: React.FC = () => {
             title="Current selected location"
           >
             <MapPin className="w-3.5 h-3.5 text-water" aria-hidden="true" />
-            <span className="font-sans font-medium text-primary">
+            <span className="font-sans font-medium text-primary mr-1.5">
               {location.district}
             </span>
-            <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.2 bg-leaf/10 text-leaf rounded-full font-bold">
+            <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 bg-leaf/10 text-leaf rounded-full font-bold">
               Pilot
             </span>
           </Link>

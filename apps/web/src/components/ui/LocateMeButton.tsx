@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Navigation, Loader2, Check, AlertCircle } from "lucide-react";
+import { useLocale } from "next-intl";
+import { Navigation, Loader2, Check, AlertCircle, Info } from "lucide-react";
 import { useAppStore, type LocationInfo } from "@/lib/store/useAppStore";
 import { requestUserLocation } from "@/lib/location/geolocation";
 
@@ -18,10 +19,12 @@ export const LocateMeButton: React.FC<LocateMeButtonProps> = ({
   onLocated,
   showLabel = true,
 }) => {
+  const locale = useLocale();
   const setStoreLocation = useAppStore((s) => s.setLocation);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<"success" | "error" | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [outsideNotice, setOutsideNotice] = useState<string | null>(null);
 
   const handleLocate = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,8 +33,9 @@ export const LocateMeButton: React.FC<LocateMeButtonProps> = ({
     setLoading(true);
     setFeedback(null);
     setErrorMessage(null);
+    setOutsideNotice(null);
 
-    const result = await requestUserLocation();
+    const result = await requestUserLocation(locale);
     setLoading(false);
 
     if (result.status === "success" && result.location) {
@@ -40,7 +44,13 @@ export const LocateMeButton: React.FC<LocateMeButtonProps> = ({
         onLocated(result.location);
       }
       setFeedback("success");
-      setTimeout(() => setFeedback(null), 3000);
+
+      if (result.outsidePilotNotice) {
+        setOutsideNotice(result.outsidePilotNotice);
+        setTimeout(() => setOutsideNotice(null), 6000);
+      } else {
+        setTimeout(() => setFeedback(null), 3000);
+      }
     } else {
       setFeedback("error");
       setErrorMessage(result.error || "Location access failed.");
@@ -58,9 +68,9 @@ export const LocateMeButton: React.FC<LocateMeButtonProps> = ({
           type="button"
           onClick={handleLocate}
           disabled={loading}
-          title={errorMessage || "Access device GPS location"}
+          title={outsideNotice || errorMessage || (locale === "bn" ? "আমার জিপিএস লোকেশন নিন" : "Access device GPS location")}
           aria-label="Access device GPS location"
-          className={`p-1.5 rounded-full border transition-all text-xs flex items-center justify-center ${
+          className={`p-1.5 rounded-full border transition-all text-xs flex items-center justify-center touch-target min-h-[36px] min-w-[36px] ${
             feedback === "success"
               ? "bg-leaf text-white border-leaf"
               : feedback === "error"
@@ -69,15 +79,25 @@ export const LocateMeButton: React.FC<LocateMeButtonProps> = ({
           } ${className}`}
         >
           {loading ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-water" />
+            <Loader2 className="w-4 h-4 animate-spin text-water" />
           ) : feedback === "success" ? (
-            <Check className="w-3.5 h-3.5" />
+            <Check className="w-4 h-4" />
           ) : feedback === "error" ? (
-            <AlertCircle className="w-3.5 h-3.5" />
+            <AlertCircle className="w-4 h-4" />
           ) : (
-            <Navigation className="w-3.5 h-3.5" />
+            <Navigation className="w-4 h-4" />
           )}
         </button>
+
+        {outsideNotice && (
+          <div className="absolute right-0 top-full mt-2 z-50 p-3 rounded-lg bg-surface border border-gold shadow-raised text-xs text-primary leading-tight min-w-[240px] max-w-xs animate-in fade-in">
+            <div className="flex items-start gap-1.5 font-medium text-amber-800 dark:text-amber-300">
+              <Info className="w-4 h-4 flex-shrink-0 text-gold" />
+              <span>{outsideNotice}</span>
+            </div>
+          </div>
+        )}
+
         {errorMessage && (
           <span className="absolute left-0 bottom-full mb-1 z-50 text-[10px] bg-bg/95 border border-border shadow-raised rounded px-2 py-1 text-red-600 whitespace-nowrap">
             {errorMessage}
@@ -98,40 +118,39 @@ export const LocateMeButton: React.FC<LocateMeButtonProps> = ({
             ? "bg-leaf/15 text-leaf border-leaf/40 font-bold"
             : feedback === "error"
             ? "bg-red-50 text-red-700 border-red-200"
-            : variant === "primary"
-            ? "bg-forest text-white border-forest hover:bg-forest/90"
-            : "bg-surface text-primary border-border hover:border-water hover:bg-surface-hover shadow-2xs"
+            : "bg-surface text-primary border-border hover:border-gold hover:text-primary"
         } ${className}`}
-        title="Access current device location via browser GPS"
       >
         {loading ? (
           <Loader2 className="w-3.5 h-3.5 animate-spin text-water" />
         ) : feedback === "success" ? (
           <Check className="w-3.5 h-3.5 text-leaf" />
         ) : feedback === "error" ? (
-          <AlertCircle className="w-3.5 h-3.5 text-red-500" />
+          <AlertCircle className="w-3.5 h-3.5 text-red-600" />
         ) : (
           <Navigation className="w-3.5 h-3.5 text-water" />
         )}
         {showLabel && (
           <span>
             {loading
-              ? "Accessing GPS..."
+              ? locale === "bn" ? "খোঁজা হচ্ছে..." : "Locating..."
               : feedback === "success"
-              ? "Located!"
+              ? locale === "bn" ? "শনাক্তকৃত" : "Located"
               : feedback === "error"
-              ? "Permission Denied"
-              : "Use My Location"}
+              ? locale === "bn" ? "ব্যর্থ" : "Retry"
+              : locale === "bn" ? "আমার অবস্থান" : "Use My Location"}
           </span>
         )}
       </button>
 
-      {errorMessage && (
-        <span className="absolute top-full mt-1.5 left-0 z-50 text-[11px] bg-surface text-red-600 border border-red-200 shadow-raised rounded px-2.5 py-1 max-w-xs leading-tight">
-          {errorMessage}
-        </span>
+      {outsideNotice && (
+        <div className="absolute top-full mt-2 left-0 z-50 p-3 rounded-lg bg-surface border border-gold shadow-raised text-xs text-primary leading-tight min-w-[240px] max-w-xs animate-in fade-in">
+          <div className="flex items-start gap-1.5 font-medium text-amber-800 dark:text-amber-300">
+            <Info className="w-4 h-4 flex-shrink-0 text-gold" />
+            <span>{outsideNotice}</span>
+          </div>
+        </div>
       )}
     </div>
   );
 };
-

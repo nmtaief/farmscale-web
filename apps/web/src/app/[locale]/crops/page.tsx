@@ -10,8 +10,10 @@ import { Filter, Droplets, Sprout, DollarSign, Calendar, ArrowRight, Search } fr
 import { SAMPLE_CROPS, type CropTrait } from "@farmscale/scoring";
 
 export default function CropsPage() {
-  const t = useTranslations("crops");
+  const tCrops = useTranslations("crops");
   const tCommon = useTranslations("common");
+  const tSeasons = useTranslations("seasons");
+  const tTraits = useTranslations("cropTraits");
 
   const [seasonFilter, setSeasonFilter] = useState<string>("all");
   const [waterFilter, setWaterFilter] = useState<string>("all");
@@ -23,12 +25,24 @@ export default function CropsPage() {
     if (seasonFilter !== "all" && crop.season !== seasonFilter) return false;
     if (waterFilter === "low" && crop.waterNeedRating < 7) return false;
     if (waterFilter === "high" && crop.waterNeedRating >= 7) return false;
-    if (searchQuery && !crop.id.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (
+      searchQuery &&
+      !crop.id.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !tCrops(crop.id).toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
+      return false;
+    }
     return true;
   });
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="space-y-6 pb-16">
+      {/* Honest sample notice banner */}
+      <div className="p-3.5 rounded-md bg-leaf/10 border border-leaf/30 text-xs text-primary leading-relaxed">
+        <span className="font-bold text-leaf mr-1.5">পাইলট প্রাক্কলন:</span>
+        {tCommon("honestSampleBanner")}
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
@@ -36,7 +50,7 @@ export default function CropsPage() {
             Agronomic Traits & Evidence
           </span>
           <h1 className="text-2xl sm:text-4xl font-serif font-bold text-primary m-0">
-            Crop Library ({filteredCrops.length})
+            {tCommon("appName")} Crop Library ({filteredCrops.length})
           </h1>
           <p className="text-sm text-secondary m-0 mt-1">
             Browse verified crop profiles, seasonal water demands, and nitrogen-fixing traits for Rajshahi.
@@ -54,7 +68,7 @@ export default function CropsPage() {
           <Search className="w-4 h-4 text-secondary" />
           <input
             type="text"
-            placeholder="Search crop name..."
+            placeholder={tTraits("searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-transparent text-sm text-primary focus:outline-none placeholder:text-muted"
@@ -68,13 +82,13 @@ export default function CropsPage() {
               key={s}
               type="button"
               onClick={() => setSeasonFilter(s)}
-              className={`px-3 py-1.5 rounded-full capitalize transition-colors ${
+              className={`px-3 py-1.5 rounded-full transition-colors ${
                 seasonFilter === s
                   ? "bg-gold text-forest font-bold shadow-xs"
                   : "bg-bg text-secondary hover:text-primary border border-border"
               }`}
             >
-              {s.replace("_", "-")}
+              {s === "all" ? tTraits("allSeasons") : tSeasons(s)}
             </button>
           ))}
 
@@ -84,19 +98,23 @@ export default function CropsPage() {
               key={w}
               type="button"
               onClick={() => setWaterFilter(w)}
-              className={`px-3 py-1.5 rounded-full capitalize transition-colors ${
+              className={`px-3 py-1.5 rounded-full transition-colors ${
                 waterFilter === w
                   ? "bg-water text-white font-bold shadow-xs"
                   : "bg-bg text-secondary hover:text-primary border border-border"
               }`}
             >
-              {w === "low" ? "Low (Saves water)" : w === "high" ? "High Water" : "All"}
+              {w === "low"
+                ? tTraits("lowWater")
+                : w === "high"
+                ? tTraits("highWater")
+                : tTraits("allWater")}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Crop Cards Grid (2-3 columns on desktop, 1 on mobile) */}
+      {/* Crop Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCrops.map((crop) => (
           <Link
@@ -106,14 +124,14 @@ export default function CropsPage() {
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-bg text-secondary">
-                  {crop.season.replace("_", "-")}
+                <span className="text-[10px] font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-bg text-secondary">
+                  {tSeasons(crop.season)}
                 </span>
                 <Chip state="sample">Sample data</Chip>
               </div>
 
-              <h2 className="text-xl font-serif font-bold text-primary group-hover:text-gold-text transition-colors capitalize m-0">
-                {crop.id.replace("_", " ")}
+              <h2 className="text-xl font-serif font-bold text-primary group-hover:text-gold-text transition-colors m-0">
+                {tCrops(crop.id)}
               </h2>
 
               {/* Trait Gauges */}
@@ -121,7 +139,7 @@ export default function CropsPage() {
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-secondary flex items-center gap-1.5">
                     <Droplets className="w-3.5 h-3.5 text-water" />
-                    Water Efficiency
+                    {tTraits("waterEfficiency")}
                   </span>
                   <span className="font-mono font-bold text-primary">{crop.waterNeedRating}/10</span>
                 </div>
@@ -135,7 +153,7 @@ export default function CropsPage() {
                 <div className="flex items-center justify-between text-xs pt-1">
                   <span className="text-secondary flex items-center gap-1.5">
                     <Sprout className="w-3.5 h-3.5 text-leaf" />
-                    Soil Regeneration
+                    {tTraits("soilRegeneration")}
                   </span>
                   <span className="font-mono font-bold text-primary">{crop.soilBenefitRating}/10</span>
                 </div>
@@ -149,7 +167,7 @@ export default function CropsPage() {
                 <div className="flex items-center justify-between text-xs pt-1">
                   <span className="text-secondary flex items-center gap-1.5">
                     <DollarSign className="w-3.5 h-3.5 text-gold-text" />
-                    Income Margin
+                    {tTraits("incomeMargin")}
                   </span>
                   <span className="font-mono font-bold text-primary">{crop.incomeRating}/10</span>
                 </div>
