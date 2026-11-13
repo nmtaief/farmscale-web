@@ -222,3 +222,4 @@ export const CropIcon: React.FC<CropIconProps> = ({
 
   return svg;
 };
+

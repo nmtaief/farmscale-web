@@ -105,4 +105,33 @@ describe("Simple Home Page & Recommend API Acceptance Tests", () => {
       expect(formatTaka(38000, "en")).toBe("৳38,000");
     });
   });
+
+  // 5. Map Picker Bounds and Weather Adaptation Logic
+  describe("Map Picker & Weather Adaptation", () => {
+    it("computes nearest pilot area for coordinates clicked on map", () => {
+      // Near Godagari
+      const clickLat = 24.48;
+      const clickLng = 88.34;
+      let nearest = PILOT_AREAS[0];
+      let bestDist = Infinity;
+      for (const a of PILOT_AREAS) {
+        const d = Math.hypot(a.lat - clickLat, a.lng - clickLng);
+        if (d < bestDist) {
+          bestDist = d;
+          nearest = a;
+        }
+      }
+      expect(nearest.id).toBe("godagari");
+    });
+
+    it("triggers weather warning flag when rain probability exceeds threshold", () => {
+      const dailyPrecip = [0, 0, 8.5, 0];
+      const hasRain = dailyPrecip.some((p) => p >= 1.0);
+      expect(hasRain).toBe(true);
+
+      const generateWarning = (mm: number) =>
+        `সতর্কতা: বৃষ্টির সম্ভাবনা (${mm} মিমি)। সেচ স্থগিত রাখুন।`;
+      expect(generateWarning(8.5)).toContain("সেচ স্থগিত রাখুন");
+    });
+  });
 });

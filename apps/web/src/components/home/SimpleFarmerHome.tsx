@@ -1,25 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/routing";
+import { Navigation, Sparkles, ArrowRight } from "lucide-react";
 import { CropIcon, CROP_NAMES } from "@/components/crops/CropIcon";
-import type { RecommendOption, RecommendResponse } from "@/lib/recommend/recommendData";
-
-interface AreaItem {
-  id: string;
-  bn: string;
-  en: string;
-  lat: number;
-  lng: number;
-}
-
-const AREAS: AreaItem[] = [
-  { id: "sadar", bn: "রাজশাহী সদর", en: "Rajshahi Sadar", lat: 24.37, lng: 88.60 },
-  { id: "godagari", bn: "গোদাগাড়ী", en: "Godagari", lat: 24.47, lng: 88.35 },
-  { id: "tanore", bn: "তানোর", en: "Tanore", lat: 24.53, lng: 88.53 },
-  { id: "paba", bn: "পবা", en: "Paba", lat: 24.43, lng: 88.55 },
-];
+import { BarindMapPicker } from "./BarindMapPicker";
+import { AiFarmingOutline } from "./AiFarmingOutline";
+import { PILOT_AREAS, type PilotArea, type RecommendOption, type RecommendResponse } from "@/lib/recommend/recommendData";
 
 const TEXTS = {
   bn: {
@@ -27,6 +15,8 @@ const TEXTS = {
     sub: "আপনার অবস্থান দিন, আমরা ৩টি সেরা চাষের পথ দেখাব।",
     go: "আমার অবস্থান ব্যবহার করুন",
     or: "অথবা এলাকা বেছে নিন",
+    pickMap: "মানচিত্রে খুঁজুন",
+    closeMap: "মানচিত্র বন্ধ করুন",
     finding: "অবস্থান খুঁজছি…",
     denied: "অবস্থান পাওয়া যায়নি। নিচ থেকে এলাকা বেছে নিন।",
     far: "আপনার জায়গা পাইলট এলাকার বাইরে, তাই কাছের এলাকার ফল দেখানো হচ্ছে।",
@@ -34,6 +24,7 @@ const TEXTS = {
     profit: "লাভ / বিঘা",
     cost: "খরচ / বিঘা",
     water: "পানি",
+    selectPlan: "পূর্ণাঙ্গ চাষের রূপরেখা ও আবহাওয়া দেখুন",
     foot: "নাসা উপগ্রহের বৃষ্টি, তাপ ও মাটির আর্দ্রতার তথ্য থেকে XGBoost মডেল হিসাব করেছে। সংখ্যাগুলো উদাহরণ; রোপণের আগে উপজেলা কৃষি অফিসারের সাথে মিলিয়ে নিন।",
     lv: { high: "বেশি", hi: "বেশি", mid: "মাঝারি", medium: "মাঝারি", low: "কম", lo: "কম" } as Record<string, string>,
     error: "ফসল সুপারিশ আনতে সমস্যা হয়েছে। আবার চেষ্টা করুন।",
@@ -49,6 +40,8 @@ const TEXTS = {
     sub: "Share your location and we will show 3 best ways to farm it.",
     go: "Use my location",
     or: "or pick your area",
+    pickMap: "Pick on Map",
+    closeMap: "Close Map",
     finding: "Finding your location…",
     denied: "Could not get your location. Pick your area below.",
     far: "You are outside the pilot area, so we are showing the nearest area.",
@@ -56,6 +49,7 @@ const TEXTS = {
     profit: "Profit / bigha",
     cost: "Cost / bigha",
     water: "Water",
+    selectPlan: "View Outline & Live Weather Plan",
     foot: "An XGBoost model works this out from NASA satellite rain, heat and soil moisture data. Numbers are examples; confirm with your Upazila Agriculture Officer before planting.",
     lv: { high: "High", hi: "High", mid: "Medium", medium: "Medium", low: "Low", lo: "Low" } as Record<string, string>,
     error: "Could not load recommendations. Please try again.",
@@ -82,11 +76,12 @@ export const SimpleFarmerHome: React.FC = () => {
   const pathname = usePathname();
   const [isPendingLang, startLangTransition] = useTransition();
 
-  const [selectedArea, setSelectedArea] = useState<AreaItem | null>(null);
+  const [selectedArea, setSelectedArea] = useState<PilotArea | null>(null);
+  const [showMap, setShowMap] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
   const [recommendations, setRecommendations] = useState<RecommendOption[]>([]);
+  const [selectedOptionForOutline, setSelectedOptionForOutline] = useState<RecommendOption | null>(null);
 
   // Switch language between Bangla and English
   const handleLanguageChange = (nextLocale: "bn" | "en") => {
@@ -99,7 +94,7 @@ export const SimpleFarmerHome: React.FC = () => {
   // Fetch recommendations from /api/recommend
   const fetchRecommendations = async (params: { lat?: number; lng?: number; areaId?: string; isFar?: boolean }) => {
     setLoading(true);
-    setError(false);
+    setSelectedOptionForOutline(null);
     try {
       const query = new URLSearchParams();
       if (params.areaId) query.set("area", params.areaId);
@@ -120,18 +115,22 @@ export const SimpleFarmerHome: React.FC = () => {
         setStatusMessage(t.far);
       }
     } catch {
-      setError(true);
       setStatusMessage(t.error);
     } finally {
       setLoading(false);
     }
   };
 
-  // User taps an area chip
-  const handleSelectArea = (area: AreaItem) => {
+  // User taps an area chip or map pin
+  const handleSelectArea = (area: PilotArea, details?: { lat: number; lng: number; isFar: boolean }) => {
     setSelectedArea(area);
     setStatusMessage("");
-    fetchRecommendations({ areaId: area.id });
+    fetchRecommendations({
+      areaId: area.id,
+      lat: details?.lat,
+      lng: details?.lng,
+      isFar: details?.isFar,
+    });
   };
 
   // User taps "Use my location" button
@@ -149,9 +148,9 @@ export const SimpleFarmerHome: React.FC = () => {
         const userLng = pos.coords.longitude;
 
         // Find nearest pilot area
-        let bestArea = AREAS[0];
+        let bestArea = PILOT_AREAS[0];
         let bestDist = Infinity;
-        for (const a of AREAS) {
+        for (const a of PILOT_AREAS) {
           const dist = Math.hypot(a.lat - userLat, a.lng - userLng);
           if (dist < bestDist) {
             bestDist = dist;
@@ -279,12 +278,30 @@ export const SimpleFarmerHome: React.FC = () => {
         <span>{t.go}</span>
       </button>
 
-      {/* Fallback Area Chips */}
-      <p className="text-[15px] text-secondary mt-5 mb-2 font-medium">
-        {t.or}
-      </p>
+      {/* Fallback Area Chips & Map Picker Toggle */}
+      <div className="flex items-center justify-between mt-5 mb-2">
+        <p className="text-[15px] text-secondary font-medium m-0">
+          {t.or}
+        </p>
+
+        {/* Map Picker Trigger Button */}
+        <button
+          type="button"
+          onClick={() => setShowMap((prev) => !prev)}
+          className={`px-3 py-1.5 rounded-full font-medium text-[13px] sm:text-[14px] transition-all cursor-pointer border flex items-center gap-1.5 ${
+            showMap
+              ? "border-forest bg-forest text-white"
+              : "border-gold/60 bg-gold/15 text-primary hover:border-gold"
+          }`}
+        >
+          <Navigation className="w-3.5 h-3.5 text-gold shrink-0" />
+          <span>{showMap ? t.closeMap : t.pickMap}</span>
+        </button>
+      </div>
+
+      {/* Pilot Upazila Chips */}
       <div className="flex flex-wrap gap-2">
-        {AREAS.map((a) => {
+        {PILOT_AREAS.map((a) => {
           const isSelected = selectedArea?.id === a.id;
           return (
             <button
@@ -298,11 +315,25 @@ export const SimpleFarmerHome: React.FC = () => {
                   : "border-border bg-surface text-primary hover:border-gold"
               } focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary`}
             >
-              {a[lang]}
+              {lang === "bn" ? a.name_bn : a.name_en}
             </button>
           );
         })}
       </div>
+
+      {/* Interactive Barind Map Picker (Opens when user wants) */}
+      {showMap && (
+        <div className="mt-3">
+          <BarindMapPicker
+            selectedAreaId={selectedArea?.id}
+            lang={lang}
+            onSelectArea={(area, details) => {
+              handleSelectArea(area, details);
+            }}
+            onClose={() => setShowMap(false)}
+          />
+        </div>
+      )}
 
       {/* Dynamic Status / Location Notes */}
       <p
@@ -327,13 +358,14 @@ export const SimpleFarmerHome: React.FC = () => {
             <p className="font-semibold text-[17px] text-primary mb-3">
               {t.where}
               <span className="text-forest dark:text-gold font-bold">
-                {selectedArea[lang]}
+                {lang === "bn" ? selectedArea.name_bn : selectedArea.name_en}
               </span>
             </p>
 
             {/* Exactly 3 Options in strict order: profit, shift, easy */}
             {recommendations.map((opt) => {
               const isBest = opt.key === "profit";
+              const isSelectedForOutline = selectedOptionForOutline?.key === opt.key;
               const title = t.titles[opt.key] || (lang === "bn" ? opt.title_bn : opt.title_en);
               const reason = lang === "bn" ? opt.reason_bn : opt.reason_en;
               const waterLabel = t.lv[opt.water] || opt.water;
@@ -345,7 +377,7 @@ export const SimpleFarmerHome: React.FC = () => {
                     isBest
                       ? "bg-forest border-2 border-forest text-white p-5 sm:p-6"
                       : "bg-surface border border-border text-primary p-4 sm:p-5"
-                  }`}
+                  } ${isSelectedForOutline ? "ring-2 ring-gold" : ""}`}
                 >
                   <h2
                     className={`text-[19px] font-bold mb-3 ${
@@ -456,9 +488,44 @@ export const SimpleFarmerHome: React.FC = () => {
                   >
                     {reason}
                   </p>
+
+                  {/* Select this Option Button -> Triggers AI Outline & Weather Warning */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedOptionForOutline(opt);
+                      setTimeout(() => {
+                        document.getElementById("outline-section")?.scrollIntoView({ behavior: "smooth" });
+                      }, 100);
+                    }}
+                    className={`mt-4 w-full py-3 px-4 rounded-xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm active:scale-[0.99] ${
+                      isBest
+                        ? "bg-gold hover:bg-gold/90 text-[#1a1300]"
+                        : "bg-forest hover:bg-forest/90 text-white"
+                    }`}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>{t.selectPlan}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </article>
               );
             })}
+
+            {/* AI Farming Outline & Live Weather Advisory (Activated upon option selection) */}
+            {selectedOptionForOutline && (
+              <div id="outline-section" className="mt-6 pt-4 border-t border-border">
+                <AiFarmingOutline
+                  option={selectedOptionForOutline}
+                  areaNameBn={selectedArea.name_bn}
+                  areaNameEn={selectedArea.name_en}
+                  lat={selectedArea.lat}
+                  lng={selectedArea.lng}
+                  lang={lang}
+                  onBackToOptions={() => setSelectedOptionForOutline(null)}
+                />
+              </div>
+            )}
           </div>
         )}
       </section>

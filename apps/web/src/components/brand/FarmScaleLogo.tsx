@@ -41,3 +41,4 @@ export const FarmScaleLogo: React.FC<FarmScaleLogoProps> = ({
     </svg>
   );
 };
+
