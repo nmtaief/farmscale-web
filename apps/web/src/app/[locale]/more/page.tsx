@@ -85,7 +85,7 @@ export default function MorePage() {
                 {locale === "bn" ? "ভাষার নির্বাচন" : "Interface Language"}
               </span>
               <span className="text-xs text-secondary">
-                বাংলা (Bangla), English, and 日本語 (Japanese)
+                বাংলা (Bangla) & English
               </span>
             </div>
             <LanguageSwitcher />

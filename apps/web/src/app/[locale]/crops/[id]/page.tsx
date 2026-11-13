@@ -36,7 +36,6 @@ export async function generateMetadata({ params }: CropDetailPageProps): Promise
       languages: {
         en: `https://farmscale-web.vercel.app/en/crops/${id}`,
         bn: `https://farmscale-web.vercel.app/bn/crops/${id}`,
-        ja: `https://farmscale-web.vercel.app/ja/crops/${id}`,
       },
     },
   };

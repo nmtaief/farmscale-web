@@ -887,3 +887,4 @@ export const FarmerWizard: React.FC = () => {
     </div>
   );
 };
+

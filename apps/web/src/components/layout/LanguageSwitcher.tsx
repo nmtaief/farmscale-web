@@ -12,12 +12,11 @@ export const LanguageSwitcher: React.FC = () => {
   const [isPending, startTransition] = useTransition();
 
   const languages = [
-    { code: "en", label: "English" },
     { code: "bn", label: "বাংলা" },
-    { code: "ja", label: "日本語" },
+    { code: "en", label: "English" },
   ] as const;
 
-  const handleSelect = (nextLocale: "en" | "bn" | "ja") => {
+  const handleSelect = (nextLocale: "en" | "bn") => {
     if (nextLocale === locale) return;
     startTransition(() => {
       router.replace(pathname, { locale: nextLocale });

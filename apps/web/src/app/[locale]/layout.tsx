@@ -25,18 +25,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const isBn = locale === "bn";
-  const isJa = locale === "ja";
 
   const title = isBn
     ? "ফার্মস্কেল – নাসা স্যাটেলাইট তথ্যে বরেন্দ্র কৃষি পরিকল্পনা"
-    : isJa
-    ? "FarmScale – NASA衛星データによる気候適応型輪作計画"
     : "FarmScale – Climate-Adapted Crop Rotations with NASA Earth Data";
 
   const description = isBn
     ? "নাসা স্যাটেলাইট ও মাটির তথ্য সমন্বয় করে রাজশাহী ও বরেন্দ্র অঞ্চলের জন্য উপযোগী ৩-ফসলি লাভজনক পর্যায় পরিকল্পনা।"
-    : isJa
-    ? "NASA地球観測データと農家優先度を統合したバングラデシュ・バインド地域向け気候適応型3期作営農支援アプリ。"
     : "Decision-support web app combining NASA Earth observations, local soil metrics and farmer priorities to plan resilient 3-season crop rotations.";
 
   return {
@@ -51,7 +46,6 @@ export async function generateMetadata({
       languages: {
         en: "/en",
         bn: "/bn",
-        ja: "/ja",
         "x-default": "/bn",
       },
     },
@@ -84,12 +78,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   // Determine script-specific class for font scoping
-  const scriptClass =
-    locale === "bn"
-      ? "font-bengali"
-      : locale === "ja"
-      ? "font-japanese"
-      : "font-latin";
+  const scriptClass = locale === "bn" ? "font-bengali" : "font-latin";
 
   return (
     <html lang={locale} className={scriptClass} suppressHydrationWarning>

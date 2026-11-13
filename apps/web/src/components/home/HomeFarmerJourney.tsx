@@ -192,3 +192,4 @@ export const HomeFarmerJourney: React.FC = () => {
     </div>
   );
 };
+

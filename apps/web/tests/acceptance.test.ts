@@ -1,13 +1,25 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-import { rankRotations, SAMPLE_ROTATIONS, SAMPLE_CROPS } from "@farmscale/scoring";
+import { rankRotations, SAMPLE_ROTATIONS } from "@farmscale/scoring";
+import { routing } from "../src/i18n/routing";
 
-describe("Part C Acceptance Tests", () => {
+describe("Acceptance Tests (Bangla & English Only)", () => {
   const messagesDir = path.resolve(__dirname, "../messages");
   const en = JSON.parse(fs.readFileSync(path.join(messagesDir, "en.json"), "utf-8"));
   const bn = JSON.parse(fs.readFileSync(path.join(messagesDir, "bn.json"), "utf-8"));
-  const ja = JSON.parse(fs.readFileSync(path.join(messagesDir, "ja.json"), "utf-8"));
+
+  // 0. Japanese removal check
+  describe("Japanese Removal & Strict Bilingual Parity", () => {
+    it("ensures ja.json is completely removed", () => {
+      expect(fs.existsSync(path.join(messagesDir, "ja.json"))).toBe(false);
+    });
+
+    it("ensures routing only includes bn and en", () => {
+      expect(routing.locales).toEqual(["bn", "en"]);
+      expect(routing.defaultLocale).toBe("bn");
+    });
+  });
 
   // 1. Crop Trait Correctness
   describe("Crop Trait Agronomic Correctness", () => {
@@ -42,17 +54,15 @@ describe("Part C Acceptance Tests", () => {
       expect(lentilEn.toLowerCase()).toContain("nitrogen");
     });
 
-    it("verifies all 8 crops have defined soil and water descriptions across all 3 languages", () => {
+    it("verifies all 8 crops have defined soil and water descriptions across en and bn", () => {
       const cropKeys = ["mustard", "wheat", "lentil", "boro_rice", "mungbean", "aus_rice", "aman_rice", "fallow"];
 
       for (const crop of cropKeys) {
         expect(en.cropTraits.soilBenefit[crop], `en missing soilBenefit for ${crop}`).toBeDefined();
         expect(bn.cropTraits.soilBenefit[crop], `bn missing soilBenefit for ${crop}`).toBeDefined();
-        expect(ja.cropTraits.soilBenefit[crop], `ja missing soilBenefit for ${crop}`).toBeDefined();
 
         expect(en.cropTraits.waterNeed[crop], `en missing waterNeed for ${crop}`).toBeDefined();
         expect(bn.cropTraits.waterNeed[crop], `bn missing waterNeed for ${crop}`).toBeDefined();
-        expect(ja.cropTraits.waterNeed[crop], `ja missing waterNeed for ${crop}`).toBeDefined();
       }
     });
   });
@@ -75,26 +85,23 @@ describe("Part C Acceptance Tests", () => {
 
   // 3. Enum to Label Mapping
   describe("Enum to Label Mapping (No Raw Key Leakage)", () => {
-    it("ensures all season enums have translated human labels in en, bn, ja", () => {
+    it("ensures all season enums have translated human labels in en and bn", () => {
       const seasons = ["rabi", "kharif_1", "kharif_2"];
       for (const season of seasons) {
         expect(en.seasons[season]).toBeDefined();
         expect(bn.seasons[season]).toBeDefined();
-        expect(ja.seasons[season]).toBeDefined();
 
         // Never equals the raw enum string
         expect(en.seasons[season]).not.toBe(season);
         expect(bn.seasons[season]).not.toBe(season);
-        expect(ja.seasons[season]).not.toBe(season);
       }
     });
 
-    it("ensures all crop enums have translated human labels in en, bn, ja", () => {
+    it("ensures all crop enums have translated human labels in en and bn", () => {
       const crops = ["mustard", "wheat", "lentil", "boro_rice", "mungbean", "aus_rice", "aman_rice", "fallow"];
       for (const crop of crops) {
         expect(en.crops[crop]).toBeDefined();
         expect(bn.crops[crop]).toBeDefined();
-        expect(ja.crops[crop]).toBeDefined();
 
         // Bangla translations must be in Bengali script
         expect(bn.crops[crop]).not.toBe(crop);
@@ -104,20 +111,6 @@ describe("Part C Acceptance Tests", () => {
 
   // 4. I18n Key Coverage Parity
   describe("I18n Key Coverage Parity", () => {
-    function getAllKeys(obj: Record<string, any>, prefix = ""): string[] {
-      let keys: string[] = [];
-      for (const key of Object.keys(obj)) {
-        if (key === "_meta") continue;
-        const fullKey = prefix ? `${prefix}.${key}` : key;
-        if (typeof obj[key] === "object" && obj[key] !== null && !Array.isArray(obj[key])) {
-          keys = keys.concat(getAllKeys(obj[key], fullKey));
-        } else {
-          keys.push(fullKey);
-        }
-      }
-      return keys;
-    }
-
     it("verifies that bn.json contains all required top-level message keys from en.json", () => {
       const enKeys = Object.keys(en).filter((k) => k !== "_meta");
       const bnKeys = Object.keys(bn).filter((k) => k !== "_meta");
@@ -126,15 +119,5 @@ describe("Part C Acceptance Tests", () => {
         expect(bnKeys, `bn.json is missing top-level section: ${k}`).toContain(k);
       }
     });
-
-    it("verifies that ja.json contains all required top-level message keys from en.json", () => {
-      const enKeys = Object.keys(en).filter((k) => k !== "_meta");
-      const jaKeys = Object.keys(ja).filter((k) => k !== "_meta");
-
-      for (const k of enKeys) {
-        expect(jaKeys, `ja.json is missing top-level section: ${k}`).toContain(k);
-      }
-    });
   });
 });
-
