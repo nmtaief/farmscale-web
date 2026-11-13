@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Search, MapPin, Layers, ArrowRight, Compass, ShieldAlert, Check } from "lucide-react";
 import { useAppStore, DEFAULT_LOCATION, type LocationInfo } from "@/lib/store/useAppStore";
+import { LocateMeButton } from "@/components/ui/LocateMeButton";
 
 export default function ExplorePage() {
   const t = useTranslations("common");
@@ -85,6 +86,7 @@ export default function ExplorePage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <LocateMeButton variant="chip" onLocated={(loc) => setSelectedPin(loc)} />
           <Chip state="sample">Sample grid data</Chip>
         </div>
       </div>
@@ -105,6 +107,7 @@ export default function ExplorePage() {
                 className="w-full bg-transparent text-sm text-primary focus:outline-none placeholder:text-muted"
                 aria-label="Search map location"
               />
+              <LocateMeButton variant="icon" onLocated={(loc) => setSelectedPin(loc)} />
               {searchQuery && (
                 <button
                   type="button"

@@ -5,6 +5,7 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/Button";
 import { RotationRing } from "@/components/season/RotationRing";
 import { AiAssistantSlot } from "@/components/layout/AiAssistantSlot";
+import { LocateMeButton } from "@/components/ui/LocateMeButton";
 import { Compass, ShieldCheck, Cpu, Smartphone, ArrowRight, Search, MapPin, Sparkles } from "lucide-react";
 
 export default function LandingPage() {
@@ -52,6 +53,7 @@ export default function LandingPage() {
                 className="w-full bg-transparent text-sm text-primary focus:outline-none placeholder:text-muted"
                 aria-label="Location search"
               />
+              <LocateMeButton variant="icon" />
               <Link href="/explore">
                 <Button variant="primary" size="sm">
                   <span>Explore</span>
@@ -59,9 +61,10 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            {/* Quick Pilot Coordinates */}
+            {/* Quick Pilot Coordinates & GPS Trigger */}
             <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-secondary">
-              <span className="font-medium mr-1">Pilot areas:</span>
+              <LocateMeButton variant="chip" />
+              <span className="font-medium mr-1 ml-1">Pilot areas:</span>
               {pilotLocations.map((loc) => (
                 <Link
                   key={loc.name}

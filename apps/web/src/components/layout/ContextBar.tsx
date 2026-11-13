@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { MapPin, Calendar, SlidersHorizontal, BookOpen } from "lucide-react";
 import { useAppStore } from "@/lib/store/useAppStore";
 import { Link } from "@/i18n/routing";
+import { LocateMeButton } from "@/components/ui/LocateMeButton";
 
 export const ContextBar: React.FC = () => {
   const tContext = useTranslations("context");
@@ -20,15 +21,18 @@ export const ContextBar: React.FC = () => {
         {/* Left: Location & Season Info */}
         <div className="flex items-center gap-3">
           {/* Location link */}
-          <Link
-            href="/explore"
-            className="flex items-center gap-1.5 text-primary hover:text-gold transition-colors font-medium touch-target min-h-[36px]"
-          >
-            <MapPin className="w-3.5 h-3.5 text-water flex-shrink-0" />
-            <span className="truncate max-w-[200px] sm:max-w-none">
-              {location.name}
-            </span>
-          </Link>
+          <div className="flex items-center gap-1.5">
+            <Link
+              href="/explore"
+              className="flex items-center gap-1.5 text-primary hover:text-gold transition-colors font-medium touch-target min-h-[36px]"
+            >
+              <MapPin className="w-3.5 h-3.5 text-water flex-shrink-0" />
+              <span className="truncate max-w-[200px] sm:max-w-none">
+                {location.name}
+              </span>
+            </Link>
+            <LocateMeButton variant="icon" />
+          </div>
 
           <span className="text-border hidden sm:inline">|</span>
 

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { rankRotations, calculateRotationScore } from "../src/engine";
 import { SAMPLE_ROTATIONS } from "../src/fixtures";
+import type { ScoredRotation } from "../src/types";
 
 describe("FarmScale Scoring Engine", () => {
   it("ranks Mustard rotation #1 under water-first weights (8/3/4) with score 7.4", () => {
@@ -26,7 +27,7 @@ describe("FarmScale Scoring Engine", () => {
     const ranked = rankRotations(SAMPLE_ROTATIONS, weights);
 
     expect(ranked).toHaveLength(SAMPLE_ROTATIONS.length);
-    ranked.forEach((r) => {
+    ranked.forEach((r: ScoredRotation) => {
       expect(r.score).toBe(0);
     });
   });
