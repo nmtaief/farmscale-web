@@ -7,6 +7,7 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Filter, Droplets, Sprout, DollarSign, Calendar, ArrowRight, Search } from "lucide-react";
+import { CropIcon } from "@/components/crops/CropIcon";
 import { SAMPLE_CROPS, type CropTrait } from "@farmscale/scoring";
 
 export default function CropsPage() {
@@ -130,9 +131,12 @@ export default function CropsPage() {
                 <Chip state="sample">Sample data</Chip>
               </div>
 
-              <h2 className="text-xl font-serif font-bold text-primary group-hover:text-gold-text transition-colors m-0">
-                {tCrops(crop.id)}
-              </h2>
+              <div className="flex items-center gap-3">
+                <CropIcon crop={crop.id} size={44} />
+                <h2 className="text-xl font-serif font-bold text-primary group-hover:text-gold-text transition-colors m-0">
+                  {tCrops(crop.id)}
+                </h2>
+              </div>
 
               {/* Trait Gauges */}
               <div className="space-y-2 pt-2">

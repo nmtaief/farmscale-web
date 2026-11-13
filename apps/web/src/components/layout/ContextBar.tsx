@@ -4,16 +4,19 @@ import React from "react";
 import { useTranslations } from "next-intl";
 import { MapPin, Calendar, SlidersHorizontal, BookOpen } from "lucide-react";
 import { useAppStore } from "@/lib/store/useAppStore";
-import { Link } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/routing";
 import { LocateMeButton } from "@/components/ui/LocateMeButton";
 
 export const ContextBar: React.FC = () => {
+  const pathname = usePathname();
   const tContext = useTranslations("context");
   const tSeasons = useTranslations("seasons");
 
   const location = useAppStore((state) => state.location);
   const viewMode = useAppStore((state) => state.viewMode);
   const toggleViewMode = useAppStore((state) => state.toggleViewMode);
+
+  if (pathname === "/" || pathname === "") return null;
 
   return (
     <div className="sticky top-16 z-30 w-full border-b border-border/80 bg-surface/90 backdrop-blur-sm transition-colors py-2 px-4 shadow-2xs">

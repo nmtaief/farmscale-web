@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { useAppStore, type LocationInfo } from "@/lib/store/useAppStore";
 import { LocateMeButton } from "@/components/ui/LocateMeButton";
-import { useRouter } from "@/i18n/routing";
+import { useRouter, usePathname } from "@/i18n/routing";
 
 interface RankedRotation {
   rank: number;
@@ -54,6 +54,7 @@ export const AiAssistantSlot: React.FC = () => {
   const t = useTranslations("ai");
   const locale = useLocale();
   const router = useRouter();
+  const pathname = usePathname();
 
   const location = useAppStore((state) => state.location);
   const setPriorities = useAppStore((state) => state.setPriorities);
@@ -250,6 +251,8 @@ export const AiAssistantSlot: React.FC = () => {
     { label: t("quickPrompt3"), query: "বোরো ধানের বদলে অধিক লাভজনক কোন ফসল চাষ করা যায়?" },
     { label: t("quickPrompt4"), query: "বরেন্দ্র মাটিতে সরিষা চাষে কখন এবং কয়টি সেচ দিতে হয়?" },
   ];
+
+  if (pathname === "/" || pathname === "") return null;
 
   return (
     <>

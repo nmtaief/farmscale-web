@@ -1,6 +1,6 @@
 import React from "react";
-import { HomeFarmerJourney } from "@/components/home/HomeFarmerJourney";
+import { SimpleFarmerHome } from "@/components/home/SimpleFarmerHome";
 
 export default function LandingPage() {
-  return <HomeFarmerJourney />;
+  return <SimpleFarmerHome />;
 }
