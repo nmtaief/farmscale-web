@@ -3,19 +3,17 @@
 import React from "react";
 import { Link, usePathname } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { Home, Activity, CalendarRange, Sparkles } from "lucide-react";
-import { useAppStore } from "@/lib/store/useAppStore";
+import { Home, Activity, Wheat, MoreHorizontal } from "lucide-react";
 
 export const BottomTabBar: React.FC = () => {
   const t = useTranslations("nav");
   const pathname = usePathname();
-  const setAiModalOpen = useAppStore((state) => state.setAiModalOpen);
 
   const tabs = [
-    { href: "/", label: t("home"), icon: Home, isAction: false },
-    { href: "/dashboard", label: t("myField"), icon: Activity, isAction: false },
-    { href: "/plan", label: t("plan"), icon: CalendarRange, isAction: false },
-    { href: "#ask", label: t("ask"), icon: Sparkles, isAction: true },
+    { href: "/", label: t("home"), icon: Home },
+    { href: "/dashboard", label: t("myField"), icon: Activity },
+    { href: "/crops", label: t("crops"), icon: Wheat },
+    { href: "/more", label: t("more"), icon: MoreHorizontal },
   ];
 
   return (
@@ -29,26 +27,7 @@ export const BottomTabBar: React.FC = () => {
           const isActive =
             tab.href === "/"
               ? pathname === "/"
-              : !tab.isAction && pathname.startsWith(tab.href);
-
-          if (tab.isAction) {
-            return (
-              <button
-                key={tab.label}
-                type="button"
-                onClick={() => setAiModalOpen(true)}
-                className="flex flex-col items-center justify-center flex-1 h-full min-h-[48px] min-w-[48px] transition-colors rounded-sm text-secondary hover:text-gold touch-target"
-                aria-label="Open AI Advisor"
-              >
-                <span className="p-1 rounded-full bg-gold/20 text-forest dark:text-gold transition-transform">
-                  <Icon className="w-5 h-5" aria-hidden="true" />
-                </span>
-                <span className="text-[11px] leading-tight mt-0.5 tracking-tight font-bold text-primary">
-                  {tab.label}
-                </span>
-              </button>
-            );
-          }
+              : pathname.startsWith(tab.href);
 
           return (
             <Link

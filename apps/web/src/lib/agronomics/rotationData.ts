@@ -138,3 +138,4 @@ export function formatBDT(amount: number, locale = "bn"): string {
   }
   return "৳ " + rounded.toLocaleString("en-US");
 }
+
