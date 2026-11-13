@@ -225,3 +225,4 @@ export const BarindMapPicker: React.FC<BarindMapPickerProps> = ({
     </div>
   );
 };
+

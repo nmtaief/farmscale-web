@@ -708,3 +708,4 @@ export const AiFarmingOutline: React.FC<AiFarmingOutlineProps> = ({
     </div>
   );
 };
+
